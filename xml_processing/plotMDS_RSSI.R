@@ -42,14 +42,17 @@ addAttributes(box, "width"="619", "height"="484", "style"="stroke-width:1;stroke
 group_MDS = newXMLNode("g", parent = svg_root)
 addAttributes(group_MDS, "id"="layer_MDS")
 
-createMDS <- function(index_MDS, mds, group_MDS) {
+createMDS <- function(index_MDS, mds, group_MDS, group_list) {
 	circle_MDS = newXMLNode("circle", parent = group_MDS) # Plot a solid svg circle
-	addAttributes(circle_MDS, "id" = paste("MDS", index_MDS, sep = "", collapse = NULL), "cx" = 0.71 * (mds[index_MDS, 1] + 410), "cy" = 0.71 * (170 - mds[index_MDS, 2]), "r"="3", "stroke"="black", "stroke-width"="1", "fill"="black")
+	name = group_list[[index_MDS]]$.attrs[[1]]
+	index = substr(name, 9, nchar(name))
+	addAttributes(circle_MDS, "id" = paste("MDS", index, sep = "", collapse = NULL), "cx" = 0.71 * (mds[index_MDS, 1] + 410), "cy" = 0.71 * (170 - mds[index_MDS, 2]), "r"="3", "stroke"="black", "stroke-width"="1", "fill"="black")
 
 }
-lapply(1 : num_circle, createMDS, mds = mds, group_MDS = group_MDS)
+lapply(1 : num_circle, createMDS, mds = mds, group_MDS = group_MDS, group_list = svg_list[[3]])
 
 
-
+hc = hclust(as.dist(dist))
+indCluster = cutree(hc, 6)
 
 saveXML(svg_root, file = "testMDS.svg")
